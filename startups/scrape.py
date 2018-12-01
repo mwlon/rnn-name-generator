@@ -58,8 +58,8 @@ def main():
   queries = []
   #these first ones cover the startups that haven't raised any money
   #these are the ones we can't get all of, so warnings are fine
-  low = 5.9
-  high = 6.9
+  low = 0
+  high = 0.9
   while low < 10:
     for sort_col in ['signal', 'joined']:
       queries.append({
