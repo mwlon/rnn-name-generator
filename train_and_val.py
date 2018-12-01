@@ -79,10 +79,10 @@ def summarize_metrics(metrics):
   name_acc = res['correct_names'] / res['total_names']
   res['eval_accuracy'] = char_acc
   res['eval_loss'] = ll_per_char
+  print 'EVAL CHAR NEGATIVE LL:\t{}'.format(ll_per_char)
   print 'EVAL CHAR ACCURACY:\t{}'.format(char_acc)
-  print 'EVAL WORD ACCURACY:\t{}'.format(name_acc)
-  print 'EVAL LIKELIHOOD:\t{}'.format(ll)
-  print 'EVAL PER-CHAR LIKELIHOOD:\t{}'.format(ll_per_char)
+  #print 'EVAL NAME NEGATIVE LL:\t{}'.format(ll)
+  #print 'EVAL NAME ACCURACY:\t{}'.format(name_acc)
   return res
 
 tracking = []
@@ -108,7 +108,7 @@ for i in range(epochs):
   train_loss = total_loss / total_chars
   train_accuracy = total_correct / float(total_chars)
   print 'TRAIN CHAR ACCURACY {}'.format(train_accuracy)
-  print 'TRAIN CHAR LOSS {}'.format(train_loss)
+  print 'TRAIN CHAR NEGATIVE LL {}'.format(train_loss)
 
   metrics = []
   for j in range(n_val):
