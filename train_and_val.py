@@ -4,10 +4,11 @@ from torch.autograd import Variable
 from torch.nn import functional
 import torch.nn as nn
 import math
-from model import Rnn, generate_name
+from model import Rnn
 import json
 import argparse
 from charset import default_charsets, START_CHAR, END_CHAR
+import os
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -141,11 +142,13 @@ def summarize_metrics(metrics):
   res['eval_loss'] = ll_per_char
   print('EVAL CHAR NEGATIVE LL:\t{}'.format(ll_per_char))
   print('EVAL CHAR ACCURACY:\t{}'.format(char_acc))
-  #print('EVAL NAME NEGATIVE LL:\t{}'.format(ll)
-  #print('EVAL NAME ACCURACY:\t{}'.format(name_acc)
   return res
 
-tracking = []
+try:
+  os.remove(tracking_path)
+except:
+  pass
+
 for i in range(epochs):
   np.random.shuffle(train_names)
   theta = np.pi * i / float(epochs - 1)
@@ -164,7 +167,7 @@ for i in range(epochs):
       print("OH NOES, LOSS IS NAN AROUND {}".format(train_names[j - 1: j + 2]))
     if j % 100 == 0:
       print(i, j, name.rstrip(END_CHAR), loss / len(name))
-      print('generated name: {}'.format(generate_name(rnn, charset)))
+      print('generated name: {}'.format(rnn.generate_name(charset)))
   train_loss = total_loss / total_chars
   train_accuracy = total_correct / float(total_chars)
   print('TRAIN CHAR ACCURACY {}'.format(train_accuracy))
@@ -180,8 +183,8 @@ for i in range(epochs):
   summary['train_loss'] = train_loss
   summary['train_accuracy'] = train_accuracy
 
-  tracking.append(summary)
-  out = open(tracking_path, 'w')
-  json.dump(tracking, out)
-  out.close()
+  tracking_stream = open(tracking_path, 'a')
+  json.dump(summary, tracking_stream)
+  tracking_stream.write('\n')
+  tracking_stream.close()
   torch.save(rnn.state_dict(), args.checkpoint_path)
